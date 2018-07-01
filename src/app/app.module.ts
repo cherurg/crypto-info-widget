@@ -9,7 +9,6 @@ import { UserPollComponent } from './user-poll/user-poll.component'
   declarations: [AppComponent, UserPollComponent],
   imports: [BrowserModule],
   providers: [],
-  bootstrap: [AppComponent],
   entryComponents: [UserPollComponent],
 })
 export class AppModule {
