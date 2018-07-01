@@ -1,3 +1,6 @@
-<p>
-  daily-active-adresses works!
-</p>
+Ticker: {{ticker}}
+<div *ngFor="let dataPiece of dailyActiveAdressesData">
+  <span>Name: {{dataPiece.activeAddresses}}</span>
+  <br/>
+  <span>Date: {{dataPiece.datetime}}</span>
+</div>

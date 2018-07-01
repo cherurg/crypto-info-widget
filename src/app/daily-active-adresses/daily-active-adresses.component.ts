@@ -1,4 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import { Component, OnInit, ViewEncapsulation, NgZone } from '@angular/core'
+import {
+  ActiveAdressesPiece,
+  SantimentApiClientService,
+} from '../api-clients/santiment-api-client.service'
 
 @Component({
   selector: 'daily-active-adresses',
@@ -7,7 +11,22 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core'
   encapsulation: ViewEncapsulation.Native,
 })
 export class DailyActiveAdressesComponent implements OnInit {
-  constructor() {}
+  public dailyActiveAdressesData: ActiveAdressesPiece[] = []
+  public ticker = 'ICN'
+  public dailyActiveAdressesError: any
 
-  ngOnInit() {}
+  constructor(
+    private santimentApi: SantimentApiClientService,
+    private zone: NgZone,
+  ) {}
+
+  ngOnInit() {
+    this.santimentApi.queryDailyActiveAdresses(this.ticker).subscribe(data => {
+      this.zone.run(() => {
+        this.dailyActiveAdressesData = data.data.dailyActiveAddresses
+
+        console.log(this.dailyActiveAdressesData)
+      })
+    }, error => (this.dailyActiveAdressesError = error))
+  }
 }
