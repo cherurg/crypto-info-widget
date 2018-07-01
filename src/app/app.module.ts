@@ -3,22 +3,22 @@ import { NgModule, Injector } from '@angular/core'
 import { createCustomElement } from '@angular/elements'
 
 import { AppComponent } from './app.component'
-import { UserPollComponent } from './user-poll/user-poll.component'
+import { DailyActiveAdressesComponent } from './daily-active-adresses/daily-active-adresses.component'
 
 @NgModule({
-  declarations: [AppComponent, UserPollComponent],
+  declarations: [AppComponent, DailyActiveAdressesComponent],
   imports: [BrowserModule],
   providers: [],
-  entryComponents: [UserPollComponent],
+  entryComponents: [DailyActiveAdressesComponent],
 })
 export class AppModule {
   constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
-    const el = createCustomElement(UserPollComponent, {
+    const el = createCustomElement(DailyActiveAdressesComponent, {
       injector: this.injector,
     })
 
-    customElements.define('user-poll', el)
+    customElements.define('daily-active-adresses', el)
   }
 }
