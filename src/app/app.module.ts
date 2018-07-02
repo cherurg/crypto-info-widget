@@ -7,7 +7,8 @@ import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { AppComponent } from './app.component'
 import { DailyActiveAdressesComponent } from './daily-active-adresses/daily-active-adresses.component'
-import { ChartModule } from 'angular-highcharts'
+import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts'
+import * as highstock from 'highcharts/modules/stock.src'
 
 @NgModule({
   declarations: [AppComponent, DailyActiveAdressesComponent],
@@ -18,7 +19,12 @@ import { ChartModule } from 'angular-highcharts'
     HttpLinkModule,
     ChartModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HIGHCHARTS_MODULES,
+      useFactory: () => [highstock],
+    },
+  ],
   entryComponents: [DailyActiveAdressesComponent],
 })
 export class AppModule {

@@ -17,6 +17,9 @@ export class SantimentApiClientService {
 
   queryDailyActiveAdresses(
     ticker: string,
+    from: string,
+    to: string,
+    interval: string = '1d',
   ): Observable<
     ApolloQueryResult<{
       dailyActiveAddresses: ActiveAdressesPiece[]
@@ -26,12 +29,17 @@ export class SantimentApiClientService {
       dailyActiveAddresses: ActiveAdressesPiece[]
     }>({
       query: gql`
-        query DailyActiveAdresses($ticker: String!) {
+        query DailyActiveAdresses(
+          $ticker: String!
+          $interval: String!
+          $from: String!
+          $to: String!
+        ) {
           dailyActiveAddresses(
             ticker: $ticker
-            from: "2018-06-01 16:00:00Z"
-            to: "2018-06-05 16:00:00Z"
-            interval: "1d"
+            from: $from
+            to: $to
+            interval: $interval
           ) {
             activeAddresses
             datetime
@@ -40,6 +48,9 @@ export class SantimentApiClientService {
       `,
       variables: {
         ticker,
+        interval,
+        from,
+        to,
       },
     })
   }
