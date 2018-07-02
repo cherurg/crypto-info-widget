@@ -4,6 +4,8 @@ import {
   SantimentApiClientService,
 } from '../api-clients/santiment-api-client.service'
 import { StockChart } from 'angular-highcharts'
+import { KrakenApiClientService } from '../api-clients/kraken-api-client.service'
+import { forkJoin } from 'rxjs'
 
 @Component({
   selector: 'daily-active-adresses',
@@ -43,6 +45,7 @@ export class DailyActiveAdressesComponent implements OnInit {
 
   constructor(
     private santimentApi: SantimentApiClientService,
+    private krakenApi: KrakenApiClientService,
     private zone: NgZone,
   ) {}
 
@@ -50,28 +53,53 @@ export class DailyActiveAdressesComponent implements OnInit {
     let now = new Date().toISOString()
     let yearAgo = new Date(Date.now() - 1000 * 24 * 3600 * 1000).toISOString()
 
-    this.santimentApi
-      .queryDailyActiveAdresses(this.ticker, yearAgo, now, '1d')
-      .subscribe(data => {
-        this.zone.run(() => {
-          this.dailyActiveAdressesData = data.data.dailyActiveAddresses
+    let daa$ = this.santimentApi.queryDailyActiveAdresses(
+      this.ticker,
+      yearAgo,
+      now,
+      '1d',
+    )
 
-          let formattedData: [
-            number,
-            number
-          ][] = this.dailyActiveAdressesData.map(
-            it =>
-              [+Date.parse(it.datetime), it.activeAddresses] as [
-                number,
-                number
-              ],
-          )
+    let icnXbt = 'ICNXBT'
+    let ohlc$ = this.krakenApi.getOhlc(icnXbt, 1440)
 
-          this.chart.ref.addSeries({
-            name: `${this.ticker} Daily Active Adresses`,
-            data: formattedData,
-          })
+    forkJoin(daa$, ohlc$).subscribe(([daa, ohlc]) => {
+      this.zone.run(() => {
+        this.dailyActiveAdressesData = daa.data.dailyActiveAddresses
+        let formattedData = this.dailyActiveAdressesData.map(it => [
+          +Date.parse(it.datetime),
+          it.activeAddresses,
+        ])
+
+        this.chart.ref.addSeries({
+          name: `${this.ticker} Daily Active Adresses`,
+          data: formattedData as [number, number][],
         })
-      }, error => (this.dailyActiveAdressesError = error))
+
+        console.log(ohlc[icnXbt])
+      })
+    }, error => (this.dailyActiveAdressesError = error))
+
+    // .subscribe(data => {
+    //   this.zone.run(() => {
+    //     this.dailyActiveAdressesData = data.data.dailyActiveAddresses
+
+    //     let formattedData: [
+    //       number,
+    //       number
+    //     ][] = this.dailyActiveAdressesData.map(
+    //       it =>
+    //         [+Date.parse(it.datetime), it.activeAddresses] as [
+    //           number,
+    //           number
+    //         ],
+    //     )
+
+    //     this.chart.ref.addSeries({
+    //       name: `${this.ticker} Daily Active Adresses`,
+    //       data: formattedData,
+    //     })
+    //   })
+    // }, error => (this.dailyActiveAdressesError = error))
   }
 }
