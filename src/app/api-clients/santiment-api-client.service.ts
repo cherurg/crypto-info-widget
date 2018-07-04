@@ -9,6 +9,8 @@ export interface ActiveAdressesPiece {
   datetime: string
 }
 
+export type TransactionVolumePiece = any
+
 @Injectable({
   providedIn: 'root',
 })
@@ -16,27 +18,29 @@ export class SantimentApiClientService {
   constructor(private apollo: Apollo) {}
 
   queryDailyActiveAdresses(
-    ticker: string,
+    slug: string,
     from: string,
     to: string,
     interval: string = '1d',
   ): Observable<
     ApolloQueryResult<{
       dailyActiveAddresses: ActiveAdressesPiece[]
+      transactionVolume: TransactionVolumePiece[]
     }>
   > {
     return this.apollo.query<{
       dailyActiveAddresses: ActiveAdressesPiece[]
+      transactionVolume: TransactionVolumePiece[]
     }>({
       query: gql`
         query DailyActiveAdresses(
-          $ticker: String!
+          $slug: String!
           $interval: String!
           $from: String!
           $to: String!
         ) {
           dailyActiveAddresses(
-            ticker: $ticker
+            slug: $slug
             from: $from
             to: $to
             interval: $interval
@@ -44,10 +48,19 @@ export class SantimentApiClientService {
             activeAddresses
             datetime
           }
+          transactionVolume(
+            from: $from
+            to: $to
+            slug: $slug
+            interval: $interval
+          ) {
+            datetime
+            transactionVolume
+          }
         }
       `,
       variables: {
-        ticker,
+        slug,
         interval,
         from,
         to,
