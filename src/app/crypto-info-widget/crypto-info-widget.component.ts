@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  NgZone,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core'
+import { Component, Input, NgZone, OnInit } from '@angular/core'
 import { StockChart } from 'angular-highcharts'
 import * as Highcharts from 'highcharts'
 import { capitalize } from 'lodash'
@@ -14,7 +8,8 @@ import { SantimentApiClientService } from '../api-clients/santiment-api-client.s
   selector: 'crypto-info-widget',
   templateUrl: './crypto-info-widget.component.html',
   styleUrls: ['./crypto-info-widget.component.css'],
-  encapsulation: ViewEncapsulation.Native,
+  // disabled it as Angular 6 uses .createShadowRoot which is deprecated
+  // encapsulation: ViewEncapsulation.Native,
 })
 export class CryptoInfoWidgetComponent implements OnInit {
   @Input() slug: string
