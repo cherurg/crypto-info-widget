@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { DailyActiveAdressesComponent } from './daily-active-adresses.component'
+import { CryptoInfoWidgetComponent } from './crypto-info-widget.component'
 
 describe('UserPollComponent', () => {
-  let component: DailyActiveAdressesComponent
-  let fixture: ComponentFixture<DailyActiveAdressesComponent>
+  let component: CryptoInfoWidgetComponent
+  let fixture: ComponentFixture<CryptoInfoWidgetComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DailyActiveAdressesComponent],
+      declarations: [CryptoInfoWidgetComponent],
     }).compileComponents()
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DailyActiveAdressesComponent)
+    fixture = TestBed.createComponent(CryptoInfoWidgetComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
