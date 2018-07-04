@@ -1,4 +1,4 @@
-# Crypto Web Component
+# Crypto Info Widget
 
 This is a [web component](https://www.webcomponents.org/introduction) showing some on-chain cryptocurrency metrics. Currently it shows daily active adresses and transaction volume.
 
