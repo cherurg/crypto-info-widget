@@ -6,12 +6,12 @@ import { Apollo, ApolloModule } from 'apollo-angular'
 import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { AppComponent } from './app.component'
-import { DailyActiveAdressesComponent } from './daily-active-adresses/daily-active-adresses.component'
+import { CryptoInfoWidgetComponent } from './crypto-info-widget/crypto-info-widget.component'
 import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts'
 import * as highstock from 'highcharts/modules/stock.src'
 
 @NgModule({
-  declarations: [AppComponent, DailyActiveAdressesComponent],
+  declarations: [AppComponent, CryptoInfoWidgetComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -25,7 +25,7 @@ import * as highstock from 'highcharts/modules/stock.src'
       useFactory: () => [highstock],
     },
   ],
-  entryComponents: [DailyActiveAdressesComponent],
+  entryComponents: [CryptoInfoWidgetComponent],
 })
 export class AppModule {
   constructor(private injector: Injector, apollo: Apollo, httpLink: HttpLink) {
@@ -38,10 +38,10 @@ export class AppModule {
   }
 
   ngDoBootstrap() {
-    const el = createCustomElement(DailyActiveAdressesComponent, {
+    const el = createCustomElement(CryptoInfoWidgetComponent, {
       injector: this.injector,
     })
 
-    customElements.define('daily-active-adresses', el)
+    customElements.define('crypto-info-widget', el)
   }
 }
