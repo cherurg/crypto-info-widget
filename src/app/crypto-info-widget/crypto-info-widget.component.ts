@@ -1,6 +1,13 @@
-import { Component, NgZone, OnInit, ViewEncapsulation } from '@angular/core'
+import {
+  Component,
+  Input,
+  NgZone,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core'
 import { StockChart } from 'angular-highcharts'
 import * as Highcharts from 'highcharts'
+import { capitalize } from 'lodash'
 import { SantimentApiClientService } from '../api-clients/santiment-api-client.service'
 
 @Component({
@@ -10,8 +17,9 @@ import { SantimentApiClientService } from '../api-clients/santiment-api-client.s
   encapsulation: ViewEncapsulation.Native,
 })
 export class CryptoInfoWidgetComponent implements OnInit {
-  public slug = 'iconomi'
+  @Input() slug: string
   public dailyActiveAdressesError: any
+  public dailyActiveAdressesData
 
   public chart = new StockChart({
     rangeSelector: {
@@ -20,9 +28,6 @@ export class CryptoInfoWidgetComponent implements OnInit {
     chart: {
       type: 'line',
       zoomType: 'x',
-    },
-    title: {
-      text: `${this.slug} Daily Active Adresses`,
     },
     credits: {
       enabled: false,
@@ -84,6 +89,13 @@ export class CryptoInfoWidgetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (!this.slug) {
+      console.warn(
+        'crypto-info-widget: you must provide "slug" propetry. E.g. <crypto-info-widget slug="iconomi"></crypto-info-widget>',
+      )
+      return
+    }
+
     let now = new Date().toISOString()
     let yearAgo = new Date(Date.now() - 1000 * 24 * 3600 * 1000).toISOString()
 
@@ -94,32 +106,48 @@ export class CryptoInfoWidgetComponent implements OnInit {
       '1d',
     )
 
-    daa$.subscribe(daa => {
-      this.zone.run(() => {
-        let dailyActiveAdressesData = daa.data.dailyActiveAddresses.map(it => [
-          +Date.parse(it.datetime),
-          it.activeAddresses,
-        ])
+    daa$.subscribe(
+      daa => {
+        this.zone.run(() => {
+          this.dailyActiveAdressesData = daa
+          this.dailyActiveAdressesError = null
 
-        let transactionVolume = daa.data.transactionVolume.map(it => [
-          +Date.parse(it.datetime),
-          it.transactionVolume,
-        ])
+          this.chart.ref.setTitle({
+            text: `${capitalize(this.slug)} Daily Active Adresses`,
+          })
 
-        this.chart.ref.addSeries({
-          name: `${this.slug} Daily Active Adresses`,
-          data: dailyActiveAdressesData as [number, number][],
-          yAxis: 0,
-          showInNavigator: true,
+          let dailyActiveAdressesData = daa.data.dailyActiveAddresses.map(
+            it => [+Date.parse(it.datetime), it.activeAddresses],
+          )
+
+          let transactionVolume = daa.data.transactionVolume.map(it => [
+            +Date.parse(it.datetime),
+            it.transactionVolume,
+          ])
+
+          this.chart.ref.addSeries({
+            name: `${this.slug} Daily Active Adresses`,
+            data: dailyActiveAdressesData as [number, number][],
+            yAxis: 0,
+            showInNavigator: true,
+          })
+
+          this.chart.ref.addSeries({
+            name: `${this.slug} Transaction Volume`,
+            data: transactionVolume as [number, number][],
+            yAxis: 1,
+            showInNavigator: true,
+          })
         })
+      },
+      error => {
+        console.warn(error)
+        this.dailyActiveAdressesError = error
+      },
+    )
+  }
 
-        this.chart.ref.addSeries({
-          name: `${this.slug} Transaction Volume`,
-          data: transactionVolume as [number, number][],
-          yAxis: 1,
-          showInNavigator: true,
-        })
-      })
-    }, error => (this.dailyActiveAdressesError = error))
+  dataCanBeDisplayed(): boolean {
+    return !!this.slug && !this.dailyActiveAdressesError
   }
 }
