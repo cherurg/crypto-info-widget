@@ -4,5 +4,5 @@ const concat = require('concat')
   const files = ['./dist/runtime.js', './dist/polyfills.js', './dist/main.js']
 
   await fs.ensureDir('elements')
-  await concat(files, 'elements/daily-active-adresses.js')
+  await concat(files, 'elements/crypto-info-widget.js')
 })()

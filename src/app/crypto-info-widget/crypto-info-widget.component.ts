@@ -4,12 +4,12 @@ import * as Highcharts from 'highcharts'
 import { SantimentApiClientService } from '../api-clients/santiment-api-client.service'
 
 @Component({
-  selector: 'daily-active-adresses',
-  templateUrl: './daily-active-adresses.component.html',
-  styleUrls: ['./daily-active-adresses.component.css'],
+  selector: 'crypto-info-widget',
+  templateUrl: './crypto-info-widget.component.html',
+  styleUrls: ['./crypto-info-widget.component.css'],
   encapsulation: ViewEncapsulation.Native,
 })
-export class DailyActiveAdressesComponent implements OnInit {
+export class CryptoInfoWidgetComponent implements OnInit {
   public slug = 'iconomi'
   public dailyActiveAdressesError: any
 
