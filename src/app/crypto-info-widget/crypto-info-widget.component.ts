@@ -63,7 +63,7 @@ export class CryptoInfoWidgetComponent implements OnInit {
           style: {
             color: Highcharts.getOptions().colors[1],
           },
-          format: '{value} ICN',
+          format: '{value}',
         },
       },
     ],
@@ -107,8 +107,10 @@ export class CryptoInfoWidgetComponent implements OnInit {
           this.dailyActiveAdressesData = daa
           this.dailyActiveAdressesError = null
 
+          let capitalizedSlug = capitalize(this.slug)
+
           this.chart.ref.setTitle({
-            text: `${capitalize(this.slug)} Daily Active Adresses`,
+            text: `${capitalizedSlug} Daily Active Adresses`,
           })
 
           let dailyActiveAdressesData = daa.data.dailyActiveAddresses.map(
@@ -121,17 +123,26 @@ export class CryptoInfoWidgetComponent implements OnInit {
           ])
 
           this.chart.ref.addSeries({
-            name: `${this.slug} Daily Active Adresses`,
+            name: `${capitalizedSlug} Daily Active Adresses`,
             data: dailyActiveAdressesData as [number, number][],
             yAxis: 0,
             showInNavigator: true,
           })
 
           this.chart.ref.addSeries({
-            name: `${this.slug} Transaction Volume`,
+            name: `${capitalizedSlug} Transaction Volume`,
             data: transactionVolume as [number, number][],
             yAxis: 1,
             showInNavigator: true,
+          })
+
+          this.chart.ref.yAxis[1].update({
+            labels: {
+              style: {
+                color: Highcharts.getOptions().colors[1],
+              },
+              format: `{value} ${daa.data.projectBySlug.symbol}`,
+            },
           })
         })
       },

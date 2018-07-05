@@ -9,7 +9,14 @@ export interface ActiveAdressesPiece {
   datetime: string
 }
 
-export type TransactionVolumePiece = any
+export interface TransactionVolumePiece {
+  transactionVolume: number
+  datetime: string
+}
+
+export interface Project {
+  symbol: string
+}
 
 @Injectable({
   providedIn: 'root',
@@ -26,11 +33,13 @@ export class SantimentApiClientService {
     ApolloQueryResult<{
       dailyActiveAddresses: ActiveAdressesPiece[]
       transactionVolume: TransactionVolumePiece[]
+      projectBySlug: Project
     }>
   > {
     return this.apollo.query<{
       dailyActiveAddresses: ActiveAdressesPiece[]
       transactionVolume: TransactionVolumePiece[]
+      projectBySlug: Project
     }>({
       query: gql`
         query DailyActiveAdresses(
@@ -48,6 +57,7 @@ export class SantimentApiClientService {
             activeAddresses
             datetime
           }
+
           transactionVolume(
             from: $from
             to: $to
@@ -56,6 +66,10 @@ export class SantimentApiClientService {
           ) {
             datetime
             transactionVolume
+          }
+
+          projectBySlug(slug: $slug) {
+            symbol
           }
         }
       `,
